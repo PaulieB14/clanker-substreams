@@ -7,8 +7,10 @@ use pb::clanker::v1::{
     ClankerEvents, ExtensionTriggered, FeeClaim, Token, TokenCreated, TokenMetadataUpdate,
     TokenTransfer, TokenTransfers, TokenVerified,
 };
+use std::str::FromStr;
 use substreams::errors::Error;
-use substreams::store::{StoreGet, StoreGetProto, StoreNew, StoreSet, StoreSetProto};
+use substreams::scalar::BigInt;
+use substreams::store::{StoreAdd, StoreAddBigInt, StoreAddInt64, StoreGet, StoreGetProto, StoreNew, StoreSet, StoreSetProto};
 use substreams::Hex;
 use substreams_database_change::pb::sf::substreams::sink::database::v1::DatabaseChanges;
 use substreams_database_change::tables::Tables;
@@ -317,3 +319,48 @@ pub fn db_out(
 
     Ok(tables.to_database_changes())
 }
+
+// ============================================================================
+// Additional Stores for Analytics
+// ============================================================================
+
+/// Store transfer volume per token (accumulates BigInt)
+#[substreams::handlers::store]
+pub fn store_token_volume(transfers: TokenTransfers, store: StoreAddBigInt) {
+    for transfer in &transfers.transfers {
+        let key = format!("volume:{}", transfer.token_address);
+        if let Ok(amount) = BigInt::from_str(&transfer.amount) {
+            store.add(0, &key, amount);
+        }
+    }
+}
+
+/// Store transfer counts per token
+#[substreams::handlers::store]
+pub fn store_token_transfer_counts(transfers: TokenTransfers, store: StoreAddInt64) {
+    for transfer in &transfers.transfers {
+        let key = format!("transfers:{}", transfer.token_address);
+        store.add(0, &key, 1);
+    }
+}
+
+/// Store total fees claimed per creator (recipient)
+#[substreams::handlers::store]
+pub fn store_creator_fees(events: ClankerEvents, store: StoreAddBigInt) {
+    for fee in &events.fee_claims {
+        let key = format!("fees:{}", fee.recipient);
+        if let Ok(amount) = BigInt::from_str(&fee.amount) {
+            store.add(0, &key, amount);
+        }
+    }
+}
+
+/// Store token counts per creator
+#[substreams::handlers::store]
+pub fn store_creator_token_counts(events: ClankerEvents, store: StoreAddInt64) {
+    for token in &events.token_created {
+        let key = format!("tokens:{}", token.token_admin);
+        store.add(0, &key, 1);
+    }
+}
+

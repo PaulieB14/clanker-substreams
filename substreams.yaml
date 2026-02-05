@@ -2,7 +2,9 @@ specVersion: v0.1.0
 package:
   name: clanker_substreams
   version: v0.1.0
+  url: https://github.com/PaulieB14/clanker-substreams
   description: Index Clanker token launches and activity on Base
+  image: ./clanker.jpeg
 
 imports:
   database_change: https://github.com/streamingfast/substreams-sink-database-changes/releases/download/v4.0.0/substreams-sink-database-changes-v4.0.0.spkg
@@ -55,6 +57,38 @@ modules:
       - store: store_tokens
     output:
       type: proto:clanker.v1.TokenTransfers
+
+  # Store transfer volume per token (accumulates BigInt)
+  - name: store_token_volume
+    kind: store
+    updatePolicy: add
+    valueType: bigint
+    inputs:
+      - map: map_token_transfers
+
+  # Store transfer counts per token
+  - name: store_token_transfer_counts
+    kind: store
+    updatePolicy: add
+    valueType: int64
+    inputs:
+      - map: map_token_transfers
+
+  # Store total fees claimed per creator
+  - name: store_creator_fees
+    kind: store
+    updatePolicy: add
+    valueType: bigint
+    inputs:
+      - map: map_clanker_events
+
+  # Store tokens per creator (for counting)
+  - name: store_creator_token_counts
+    kind: store
+    updatePolicy: add
+    valueType: int64
+    inputs:
+      - map: map_clanker_events
 
   # Output to database sink
   - name: db_out
