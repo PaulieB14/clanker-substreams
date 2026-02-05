@@ -18,7 +18,7 @@ use substreams_ethereum::pb::eth::v2::Block;
 use substreams_ethereum::Event;
 
 /// Clanker Factory contract address (can be overridden via params)
-const DEFAULT_CLANKER_FACTORY: &str = "20dd04c17afd5c9a8b3f2cdacaa8ee7907385bef";
+const DEFAULT_CLANKER_FACTORY: &str = "e85a59c628f7d27878aceb4bf3b35733630083a9";
 
 /// Parse the factory address from params
 fn parse_factory_address(params: &str) -> Vec<u8> {
@@ -79,7 +79,7 @@ pub fn map_clanker_events(params: String, block: Block) -> Result<ClankerEvents,
                         starting_tick: event.starting_tick.to_string().parse::<i32>().unwrap_or(0),
                         locker: Hex::encode(&event.locker),
                         mev_module: Hex::encode(&event.mev_module),
-                        extensions_supply: event.extensions_supply.to_u64(),
+                        extensions_supply: event.extensions_supply.to_string(),
                         extensions,
                         msg_sender: Hex::encode(&event.msg_sender),
                     });
@@ -243,7 +243,7 @@ pub fn db_out(
             .set("starting_tick", token.starting_tick)
             .set("locker", &token.locker)
             .set("mev_module", &token.mev_module)
-            .set("extensions_supply", token.extensions_supply)
+            .set("extensions_supply", &token.extensions_supply)
             .set("msg_sender", &token.msg_sender);
     }
 

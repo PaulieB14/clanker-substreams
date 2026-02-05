@@ -1,7 +1,7 @@
 specVersion: v0.1.0
 package:
   name: clanker_substreams
-  version: v0.1.0
+  version: v0.2.0
   url: https://github.com/PaulieB14/clanker-substreams
   description: Index Clanker token launches and activity on Base
   image: ./clanker.jpeg
@@ -27,7 +27,7 @@ binaries:
 network: base
 
 params:
-  map_clanker_events: "clanker_factory=0x20dd04c17afd5c9a8b3f2cdacaa8ee7907385bef"
+  map_clanker_events: "clanker_factory=0xe85a59c628f7d27878aceb4bf3b35733630083a9"
 
 modules:
   # Extract all Clanker factory events (TokenCreated, etc.)

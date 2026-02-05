@@ -87,19 +87,15 @@ The Clanker factory address can be configured via params:
 
 ```bash
 substreams run -e base map_clanker_events \
-  -p map_clanker_events="clanker_factory=0x20dd04c17afd5c9a8b3f2cdacaa8ee7907385bef" \
+  -p map_clanker_events="clanker_factory=0xe85a59c628f7d27878aceb4bf3b35733630083a9" \
   -s 22520000 -t +1000
 ```
 
-## Contract Addresses (Base v4.1.0)
+## Contract Addresses (Base v4)
 
 | Contract | Address |
 |----------|---------|
-| Clanker Factory | `0x20DD04c17AFD5c9a8b3f2cdacaa8Ee7907385BEF` |
-| ClankerHookDynamicFeeV2 | `0xd60D6B218b30aF607a6Fd77dD956F9baC9B50d00` |
-| ClankerHookStaticFeeV2 | `0xb4429d62f8f3bFFb98CdB9574E23499A8ED08Cc` |
-| ClankerSniperAuctionV2 | `0xebB25BB797D82CB78E1bc70406b13233c0854413` |
-| ClankerAirdropV2 | `0xf652B3610D75D81871bf96DB50825d9af28391E0` |
+| Clanker Factory (v4) | `0xE85A59c628F7d27878ACeB4bf3b35733630083a9` |
 
 ## Project Structure
 

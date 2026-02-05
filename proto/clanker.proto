@@ -37,7 +37,7 @@ message TokenCreated {
   string mev_module = 17;
 
   // Extensions (airdrop, presale, etc.)
-  uint64 extensions_supply = 18;
+  string extensions_supply = 18;  // BigInt as string
   repeated string extensions = 19;
 
   // Deployer
