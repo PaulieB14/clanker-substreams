@@ -8,10 +8,9 @@ use pb::clanker::v1::{
     TokenTransfer, TokenTransfers, TokenVerified,
 };
 use substreams::errors::Error;
-use substreams::prelude::*;
 use substreams::store::{StoreGet, StoreGetProto, StoreNew, StoreSet, StoreSetProto};
 use substreams::Hex;
-use substreams_database_change::pb::database::DatabaseChanges;
+use substreams_database_change::pb::sf::substreams::sink::database::v1::DatabaseChanges;
 use substreams_database_change::tables::Tables;
 use substreams_ethereum::pb::eth::v2::Block;
 use substreams_ethereum::Event;
@@ -75,7 +74,7 @@ pub fn map_clanker_events(params: String, block: Block) -> Result<ClankerEvents,
                         pool_id: Hex::encode(&event.pool_id),
                         pool_hook: Hex::encode(&event.pool_hook),
                         paired_token: Hex::encode(&event.paired_token),
-                        starting_tick: event.starting_tick.to_i32().unwrap_or(0),
+                        starting_tick: event.starting_tick.to_string().parse::<i32>().unwrap_or(0),
                         locker: Hex::encode(&event.locker),
                         mev_module: Hex::encode(&event.mev_module),
                         extensions_supply: event.extensions_supply.to_u64(),
