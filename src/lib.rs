@@ -3,9 +3,11 @@ mod pb;
 
 use abi::clanker_factory::events as factory_events;
 use abi::clanker_token::events as token_events;
+use abi::clanker_airdrop::events as airdrop_events;
+use abi::clanker_auction::events as auction_events;
 use pb::clanker::v1::{
-    ClankerEvents, ExtensionTriggered, FeeClaim, Token, TokenCreated, TokenMetadataUpdate,
-    TokenTransfer, TokenTransfers, TokenVerified,
+    AirdropClaimed, AirdropCreated, AuctionWon, ClankerEvents, ExtensionTriggered, FeeClaim,
+    Token, TokenCreated, TokenMetadataUpdate, TokenTransfer, TokenTransfers, TokenVerified,
 };
 use std::str::FromStr;
 use substreams::errors::Error;
@@ -19,6 +21,12 @@ use substreams_ethereum::Event;
 
 /// Clanker Factory contract address (can be overridden via params)
 const DEFAULT_CLANKER_FACTORY: &str = "e85a59c628f7d27878aceb4bf3b35733630083a9";
+
+/// ClankerAirdropV2 contract address on Base
+const CLANKER_AIRDROP: &[u8] = &hex_literal::hex!("f652B3610D75D81871bf96DB50825d9af28391E0");
+
+/// ClankerSniperAuctionV2 contract address on Base
+const CLANKER_AUCTION: &[u8] = &hex_literal::hex!("ebB25BB797D82CB78E1bc70406b13233c0854413");
 
 /// Parse the factory address from params
 fn parse_factory_address(params: &str) -> Vec<u8> {
@@ -147,6 +155,53 @@ pub fn map_clanker_events(params: String, block: Block) -> Result<ClankerEvents,
                     token_address: Hex::encode(&event.token),
                     admin: Hex::encode(&event.admin),
                 });
+            }
+
+            // Airdrop events (from ClankerAirdropV2)
+            if log.address == CLANKER_AIRDROP {
+                if let Some(event) = airdrop_events::AirdropCreated::match_and_decode(log) {
+                    events.airdrop_created.push(AirdropCreated {
+                        tx_hash: Hex::encode(&trx.hash),
+                        block_number,
+                        block_timestamp,
+                        log_index: log.index as u64,
+                        token: Hex::encode(&event.token),
+                        admin: Hex::encode(&event.admin),
+                        merkle_root: Hex::encode(&event.merkle_root),
+                        supply: event.supply.to_string(),
+                        lockup_duration: event.lockup_duration.to_u64(),
+                        vesting_duration: event.vesting_duration.to_u64(),
+                    });
+                }
+
+                if let Some(event) = airdrop_events::AirdropClaimed::match_and_decode(log) {
+                    events.airdrop_claimed.push(AirdropClaimed {
+                        tx_hash: Hex::encode(&trx.hash),
+                        block_number,
+                        block_timestamp,
+                        log_index: log.index as u64,
+                        token: Hex::encode(&event.token),
+                        user: Hex::encode(&event.user),
+                        total_claimed: event.total_user_amount_claimed.to_string(),
+                        still_locked: event.user_amount_still_locked.to_string(),
+                    });
+                }
+            }
+
+            // MEV Auction events (from ClankerSniperAuctionV2)
+            if log.address == CLANKER_AUCTION {
+                if let Some(event) = auction_events::AuctionWon::match_and_decode(log) {
+                    events.auction_won.push(AuctionWon {
+                        tx_hash: Hex::encode(&trx.hash),
+                        block_number,
+                        block_timestamp,
+                        log_index: log.index as u64,
+                        pool_id: Hex::encode(&event.pool_id),
+                        winner: Hex::encode(&event.payee),
+                        payment_amount: event.payment_amount.to_string(),
+                        round: event.round.to_u64(),
+                    });
+                }
             }
         }
     }
@@ -317,6 +372,53 @@ pub fn db_out(
             .set("amount", &transfer.amount);
     }
 
+    // Insert airdrop created events
+    for airdrop in &events.airdrop_created {
+        let pk = format!("{}-{}", airdrop.tx_hash, airdrop.log_index);
+        tables
+            .create_row("airdrops", &pk)
+            .set("tx_hash", &airdrop.tx_hash)
+            .set("block_number", airdrop.block_number)
+            .set("block_timestamp", airdrop.block_timestamp)
+            .set("log_index", airdrop.log_index)
+            .set("token", &airdrop.token)
+            .set("admin", &airdrop.admin)
+            .set("merkle_root", &airdrop.merkle_root)
+            .set("supply", &airdrop.supply)
+            .set("lockup_duration", airdrop.lockup_duration)
+            .set("vesting_duration", airdrop.vesting_duration);
+    }
+
+    // Insert airdrop claims
+    for claim in &events.airdrop_claimed {
+        let pk = format!("{}-{}", claim.tx_hash, claim.log_index);
+        tables
+            .create_row("airdrop_claims", &pk)
+            .set("tx_hash", &claim.tx_hash)
+            .set("block_number", claim.block_number)
+            .set("block_timestamp", claim.block_timestamp)
+            .set("log_index", claim.log_index)
+            .set("token", &claim.token)
+            .set("user_address", &claim.user)
+            .set("total_claimed", &claim.total_claimed)
+            .set("still_locked", &claim.still_locked);
+    }
+
+    // Insert auction wins
+    for auction in &events.auction_won {
+        let pk = format!("{}-{}", auction.tx_hash, auction.log_index);
+        tables
+            .create_row("auction_wins", &pk)
+            .set("tx_hash", &auction.tx_hash)
+            .set("block_number", auction.block_number)
+            .set("block_timestamp", auction.block_timestamp)
+            .set("log_index", auction.log_index)
+            .set("pool_id", &auction.pool_id)
+            .set("winner", &auction.winner)
+            .set("payment_amount", &auction.payment_amount)
+            .set("round", auction.round);
+    }
+
     Ok(tables.to_database_changes())
 }
 
@@ -361,6 +463,26 @@ pub fn store_creator_token_counts(events: ClankerEvents, store: StoreAddInt64) {
     for token in &events.token_created {
         let key = format!("tokens:{}", token.token_admin);
         store.add(0, &key, 1);
+    }
+}
+
+/// Store airdrop claim counts per token
+#[substreams::handlers::store]
+pub fn store_airdrop_claims_per_token(events: ClankerEvents, store: StoreAddInt64) {
+    for claim in &events.airdrop_claimed {
+        let key = format!("airdrop_claims:{}", claim.token);
+        store.add(0, &key, 1);
+    }
+}
+
+/// Store airdrop claim volume per token (BigInt)
+#[substreams::handlers::store]
+pub fn store_airdrop_volume_per_token(events: ClankerEvents, store: StoreAddBigInt) {
+    for claim in &events.airdrop_claimed {
+        let key = format!("airdrop_volume:{}", claim.token);
+        if let Ok(amount) = BigInt::from_str(&claim.total_claimed) {
+            store.add(0, &key, amount);
+        }
     }
 }
 

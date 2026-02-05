@@ -90,6 +90,50 @@ CREATE TABLE IF NOT EXISTS transfers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Airdrops created
+CREATE TABLE IF NOT EXISTS airdrops (
+    id VARCHAR(128) PRIMARY KEY,
+    tx_hash VARCHAR(66) NOT NULL,
+    block_number BIGINT NOT NULL,
+    block_timestamp BIGINT NOT NULL,
+    log_index BIGINT NOT NULL,
+    token VARCHAR(42) NOT NULL,
+    admin VARCHAR(42) NOT NULL,
+    merkle_root VARCHAR(66) NOT NULL,
+    supply NUMERIC NOT NULL,
+    lockup_duration BIGINT NOT NULL,
+    vesting_duration BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Airdrop claims
+CREATE TABLE IF NOT EXISTS airdrop_claims (
+    id VARCHAR(128) PRIMARY KEY,
+    tx_hash VARCHAR(66) NOT NULL,
+    block_number BIGINT NOT NULL,
+    block_timestamp BIGINT NOT NULL,
+    log_index BIGINT NOT NULL,
+    token VARCHAR(42) NOT NULL,
+    user_address VARCHAR(42) NOT NULL,
+    total_claimed NUMERIC NOT NULL,
+    still_locked NUMERIC NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- MEV Auction wins
+CREATE TABLE IF NOT EXISTS auction_wins (
+    id VARCHAR(128) PRIMARY KEY,
+    tx_hash VARCHAR(66) NOT NULL,
+    block_number BIGINT NOT NULL,
+    block_timestamp BIGINT NOT NULL,
+    log_index BIGINT NOT NULL,
+    pool_id VARCHAR(66) NOT NULL,
+    winner VARCHAR(42) NOT NULL,
+    payment_amount NUMERIC NOT NULL,
+    round BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes for common queries
 CREATE INDEX IF NOT EXISTS idx_tokens_block ON tokens(block_number);
 CREATE INDEX IF NOT EXISTS idx_tokens_admin ON tokens(admin);
@@ -111,3 +155,15 @@ CREATE INDEX IF NOT EXISTS idx_transfers_token ON transfers(token_address);
 CREATE INDEX IF NOT EXISTS idx_transfers_from ON transfers(from_address);
 CREATE INDEX IF NOT EXISTS idx_transfers_to ON transfers(to_address);
 CREATE INDEX IF NOT EXISTS idx_transfers_block ON transfers(block_number);
+
+CREATE INDEX IF NOT EXISTS idx_airdrops_token ON airdrops(token);
+CREATE INDEX IF NOT EXISTS idx_airdrops_admin ON airdrops(admin);
+CREATE INDEX IF NOT EXISTS idx_airdrops_block ON airdrops(block_number);
+
+CREATE INDEX IF NOT EXISTS idx_airdrop_claims_token ON airdrop_claims(token);
+CREATE INDEX IF NOT EXISTS idx_airdrop_claims_user ON airdrop_claims(user_address);
+CREATE INDEX IF NOT EXISTS idx_airdrop_claims_block ON airdrop_claims(block_number);
+
+CREATE INDEX IF NOT EXISTS idx_auction_wins_pool ON auction_wins(pool_id);
+CREATE INDEX IF NOT EXISTS idx_auction_wins_winner ON auction_wins(winner);
+CREATE INDEX IF NOT EXISTS idx_auction_wins_block ON auction_wins(block_number);

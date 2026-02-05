@@ -9,6 +9,11 @@ message ClankerEvents {
   repeated ExtensionTriggered extensions_triggered = 3;
   repeated TokenMetadataUpdate metadata_updates = 4;
   repeated TokenVerified verifications = 5;
+  // Airdrop events
+  repeated AirdropCreated airdrop_created = 6;
+  repeated AirdropClaimed airdrop_claimed = 7;
+  // Auction events
+  repeated AuctionWon auction_won = 8;
 }
 
 // Emitted when a new Clanker token is deployed
@@ -119,4 +124,53 @@ message TokenTransfer {
   string from = 6;
   string to = 7;
   string amount = 8;  // BigInt as string
+}
+
+// ============================================================================
+// Airdrop Events (ClankerAirdropV2)
+// ============================================================================
+
+// Emitted when an airdrop is created for a token
+message AirdropCreated {
+  string tx_hash = 1;
+  uint64 block_number = 2;
+  uint64 block_timestamp = 3;
+  uint64 log_index = 4;
+
+  string token = 5;
+  string admin = 6;
+  string merkle_root = 7;
+  string supply = 8;           // BigInt as string
+  uint64 lockup_duration = 9;
+  uint64 vesting_duration = 10;
+}
+
+// Emitted when a user claims airdrop tokens
+message AirdropClaimed {
+  string tx_hash = 1;
+  uint64 block_number = 2;
+  uint64 block_timestamp = 3;
+  uint64 log_index = 4;
+
+  string token = 5;
+  string user = 6;
+  string total_claimed = 7;    // BigInt as string
+  string still_locked = 8;     // BigInt as string
+}
+
+// ============================================================================
+// MEV Auction Events (ClankerSniperAuctionV2)
+// ============================================================================
+
+// Emitted when an auction is won (MEV protection)
+message AuctionWon {
+  string tx_hash = 1;
+  uint64 block_number = 2;
+  uint64 block_timestamp = 3;
+  uint64 log_index = 4;
+
+  string pool_id = 5;
+  string winner = 6;
+  string payment_amount = 7;   // BigInt as string
+  uint64 round = 8;
 }

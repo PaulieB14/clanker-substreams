@@ -1,7 +1,7 @@
 specVersion: v0.1.0
 package:
   name: clanker_substreams
-  version: v0.2.0
+  version: v0.3.0
   url: https://github.com/PaulieB14/clanker-substreams
   description: Index Clanker token launches and activity on Base
   image: ./clanker.jpeg
@@ -87,6 +87,22 @@ modules:
     kind: store
     updatePolicy: add
     valueType: int64
+    inputs:
+      - map: map_clanker_events
+
+  # Store airdrop claim counts per token
+  - name: store_airdrop_claims_per_token
+    kind: store
+    updatePolicy: add
+    valueType: int64
+    inputs:
+      - map: map_clanker_events
+
+  # Store airdrop claim volume per token
+  - name: store_airdrop_volume_per_token
+    kind: store
+    updatePolicy: add
+    valueType: bigint
     inputs:
       - map: map_clanker_events
 

@@ -1,0 +1,35 @@
+[
+  {
+    "type": "event",
+    "name": "AirdropAdminClaimed",
+    "inputs": [
+      { "name": "token", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AirdropClaimed",
+    "inputs": [
+      { "name": "token", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "user", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "totalUserAmountClaimed", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "userAmountStillLocked", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AirdropCreated",
+    "inputs": [
+      { "name": "token", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "admin", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "merkleRoot", "type": "bytes32", "indexed": false, "internalType": "bytes32" },
+      { "name": "supply", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "lockupDuration", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "vestingDuration", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  }
+]

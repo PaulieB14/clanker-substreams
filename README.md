@@ -14,6 +14,8 @@ Clanker is a set of audited smart contracts on Base that create token markets re
 - **Metadata Updates** - Token image and metadata changes
 - **Verifications** - Token verification events
 - **Transfers** - ERC20 transfers for all Clanker tokens
+- **Airdrop Claims** - Individual airdrop claims from ClankerAirdropV2
+- **MEV Auctions** - Auction wins from ClankerSniperAuctionV2
 
 ## Prerequisites
 
@@ -72,13 +74,15 @@ substreams-sink-sql run \
 
 | Module | Type | Description |
 |--------|------|-------------|
-| `map_clanker_events` | Map | Extracts factory events (TokenCreated, FeeClaims, etc.) |
+| `map_clanker_events` | Map | Extracts factory, airdrop, and auction events |
 | `store_tokens` | Store | Maintains registry of all Clanker tokens |
 | `map_token_transfers` | Map | ERC20 transfers for known Clanker tokens |
 | `store_token_volume` | Store | Accumulates transfer volume per token (BigInt) |
 | `store_token_transfer_counts` | Store | Tracks transfer counts per token |
 | `store_creator_fees` | Store | Accumulates fees claimed per creator |
 | `store_creator_token_counts` | Store | Counts tokens launched per creator |
+| `store_airdrop_claims_per_token` | Store | Tracks airdrop claim counts per token |
+| `store_airdrop_volume_per_token` | Store | Accumulates airdrop volume per token |
 | `db_out` | Map | Database sink output (PostgreSQL/ClickHouse) |
 
 ## Configuration
@@ -96,6 +100,8 @@ substreams run -e base map_clanker_events \
 | Contract | Address |
 |----------|---------|
 | Clanker Factory (v4) | `0xE85A59c628F7d27878ACeB4bf3b35733630083a9` |
+| ClankerAirdropV2 | `0xf652B3610D75D81871bf96DB50825d9af28391E0` |
+| ClankerSniperAuctionV2 | `0xebB25BB797D82CB78E1bc70406b13233c0854413` |
 
 ## Project Structure
 
