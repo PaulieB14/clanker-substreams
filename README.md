@@ -75,6 +75,10 @@ substreams-sink-sql run \
 | `map_clanker_events` | Map | Extracts factory events (TokenCreated, FeeClaims, etc.) |
 | `store_tokens` | Store | Maintains registry of all Clanker tokens |
 | `map_token_transfers` | Map | ERC20 transfers for known Clanker tokens |
+| `store_token_volume` | Store | Accumulates transfer volume per token (BigInt) |
+| `store_token_transfer_counts` | Store | Tracks transfer counts per token |
+| `store_creator_fees` | Store | Accumulates fees claimed per creator |
+| `store_creator_token_counts` | Store | Counts tokens launched per creator |
 | `db_out` | Map | Database sink output (PostgreSQL/ClickHouse) |
 
 ## Configuration
@@ -105,6 +109,7 @@ clanker-substreams/
 ├── schema.sql               # SQL schema for sink
 ├── Cargo.toml               # Rust dependencies
 ├── build.rs                 # ABI code generation
+├── clanker.jpeg             # Package icon
 ├── abi/
 │   ├── clanker_factory.json # Factory ABI
 │   └── clanker_token.json   # Token ABI
