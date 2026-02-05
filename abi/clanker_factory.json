@@ -1,0 +1,117 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "token", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "recipient", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+    ],
+    "name": "ClaimTeamFees",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "extension", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "extensionSupply", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "msgValue", "type": "uint256" }
+    ],
+    "name": "ExtensionTriggered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "admin", "type": "address" },
+      { "indexed": false, "internalType": "bool", "name": "enabled", "type": "bool" }
+    ],
+    "name": "SetAdmin",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "bool", "name": "deprecated", "type": "bool" }
+    ],
+    "name": "SetDeprecated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "extension", "type": "address" },
+      { "indexed": false, "internalType": "bool", "name": "enabled", "type": "bool" }
+    ],
+    "name": "SetExtension",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "hook", "type": "address" },
+      { "indexed": false, "internalType": "bool", "name": "enabled", "type": "bool" }
+    ],
+    "name": "SetHook",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "locker", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "pool", "type": "address" },
+      { "indexed": false, "internalType": "bool", "name": "enabled", "type": "bool" }
+    ],
+    "name": "SetLocker",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "mevModule", "type": "address" },
+      { "indexed": false, "internalType": "bool", "name": "enabled", "type": "bool" }
+    ],
+    "name": "SetMevModule",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "oldTeamFeeRecipient", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "newTeamFeeRecipient", "type": "address" }
+    ],
+    "name": "SetTeamFeeRecipient",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "internalType": "address", "name": "msgSender", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "tokenAddress", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "tokenAdmin", "type": "address" },
+      { "indexed": false, "internalType": "string", "name": "tokenImage", "type": "string" },
+      { "indexed": false, "internalType": "string", "name": "tokenName", "type": "string" },
+      { "indexed": false, "internalType": "string", "name": "tokenSymbol", "type": "string" },
+      { "indexed": false, "internalType": "string", "name": "tokenMetadata", "type": "string" },
+      { "indexed": false, "internalType": "string", "name": "tokenContext", "type": "string" },
+      { "indexed": false, "internalType": "int24", "name": "startingTick", "type": "int24" },
+      { "indexed": false, "internalType": "address", "name": "poolHook", "type": "address" },
+      { "indexed": false, "internalType": "bytes32", "name": "poolId", "type": "bytes32" },
+      { "indexed": false, "internalType": "address", "name": "pairedToken", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "locker", "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "mevModule", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "extensionsSupply", "type": "uint256" },
+      { "indexed": false, "internalType": "address[]", "name": "extensions", "type": "address[]" }
+    ],
+    "name": "TokenCreated",
+    "type": "event"
+  }
+]
